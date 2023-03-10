@@ -1,5 +1,5 @@
 #!/usr/bin/env make
-.PHONY: run_webapp install_kubectl install_kind create_docker_registry connect_registry_to_kind connect_registry_to_kind_network create_kind_cluster create_kind_cluster_with_registry push_docker_image_to_local_repo apply_deployment apply_ingress configure_contour_ingress  helm_chart
+.PHONY: run_webapp install_kubectl install_kind create_docker_registry connect_registry_to_kind connect_registry_to_kind_network create_kind_cluster create_kind_cluster_with_registry push_docker_image_to_local_repo apply_deployment apply_ingress configure_contour_ingress  push_docker_image_to_registry helm_chart
 
 run_webapp:
 	docker build -t simple-web-app-img . && \
@@ -24,31 +24,31 @@ create_kind_cluster: install_kind install_kubectl
 	kind create cluster --image=kindest/node:v1.21.12 --config ./kind_config.yaml || true \
 	kubectl get nodes 
 
-connect_registry_to_kind: connect_registry_to_kind_network
+connect_registry_to_kind:
 	kubectl apply -f ./kind_configmap.yaml;
 
 create_kind_cluster_with_registry:
 	$(MAKE) create_kind_cluster && $(MAKE) connect_registry_to_kind
 
-push_docker_image_registry:
+push_docker_image_to_registry:
 	docker tag simple-web-app-img shinychimra07/simple-web-app-img && \
 	docker push shinychimra07/simple-web-app-img
 
 apply_deployment:
 	kubectl apply -f ./deployment.yaml && \
-	kubectl port-forward deployment/simple-web-app 8080:8000 
+	kubectl port-forward deployment/simple-web-app 8080:8000
 
 apply_service:
 	kubectl apply -f ./service.yaml && \
-	kubectl port-forward service/simple-web-app 8000:8000 
+	kubectl port-forward service/simple-web-app 8080:80 
 
-apply_ingress:
-	kubectl apply -f ./ingress.yaml && \
-	kubectl patch ingress simple-web-app -p '{"spec":{"ingressClassName": "contour"}}'
-
+apply_ingress: configure_contour_ingress
+	kubectl apply -f ./ingress.yaml  && \
+	kubectl port-forward -n projectcontour service/envoy 8888:80 
 
 configure_contour_ingress:
-	kubectl apply -f https://projectcontour.io/quickstart/contour.yaml 
+	kubectl apply -f https://projectcontour.io/quickstart/contour.yaml && \
+	kubectl get pods -n projectcontour -o wide
 
-helm_chart:
+helm_chart: configure_contour_ingress
 	helm upgrade --atomic --install simple-web-app ./chart

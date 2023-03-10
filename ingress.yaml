@@ -2,15 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: simple-web-app
+  annotations:
+    kubernetes.io/ingress.class: contour
 spec:
   rules:
-  - host: simple-web-app-local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: simple-web-app
-            port:
-              number: 8000
+    - host: simple-web-app-local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: simple-web-app
+                port:
+                  name: http

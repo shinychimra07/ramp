@@ -4,12 +4,13 @@ metadata:
   labels:
     app: simple-web-app
   name: simple-web-app
+  namespace: default
 spec:
   ports:
-  - port: 8000
+  - name: http
+    port: 80
     protocol: TCP
     targetPort: 8000
   selector:
     app: simple-web-app
-  sessionAffinity: None
   type: ClusterIP

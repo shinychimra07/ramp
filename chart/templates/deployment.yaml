@@ -17,3 +17,5 @@ spec:
       containers:
       - image: {{ .Values.imageName }}
         name: {{ .Values.appName }}-{{ randAlpha 10 | lower }}
+        ports:
+        - containerPort:  {{ .Values.servicePort }}

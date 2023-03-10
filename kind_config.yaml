@@ -11,8 +11,4 @@ nodes:
         node-labels: "ingress-ready=true"
   extraPortMappings:
   - containerPort: 8000
-    hostPort: 8000
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
     protocol: TCP
