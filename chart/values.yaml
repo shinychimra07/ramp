@@ -1,0 +1,6 @@
+appName: simple-web-app
+imageName: shinychimra07/simple-web-app-img
+serviceName: simple-web-app
+serviceAddress: simple-web-app-local
+servicePort: 8000
+replicas: 2
