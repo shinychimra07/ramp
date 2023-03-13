@@ -34,23 +34,20 @@
     Check we are able to access the app using below curl
     `curl http://127.0.0.1:8080/`
 7. Deploy an Countour Ingress controller to kind cluster (https://kind.sigs.k8s.io/docs/user/ingress/)
-    Add the bitnami chart repository (which contains the Contour chart) by running the following:
-    `helm repo add bitnami https://charts.bitnami.com/bitnami`
-    Install the Contour chart by running the following:
-    `helm install my-release bitnami/contour --namespace projectcontour --create-namespace`
     Verify Contour is ready by running:
     `kubectl get po,svc`
     Apply ingress config in deployment.yaml file
     `kubectl apply -f deployment.yaml`
-    ensure the Ingress has an ingress class of contour with the following
-    `kubectl patch ingress simple-web-app -p '{"spec":{"ingressClassName": "contour"}}'`
     Test ingress with port forwarding
     `kubectl port-forward service/simple-web-app 8080:8080`
     `curl http://simple-web-app-local:8080/`
 8. Access the browser without kubectl port forwarding via ingress controller.
+    External IP address is not getting created for ingress
 9. Common docker commands
 10. Common podman commands
 11. Deployment / orchestration with helm
+    Created help chart
+    `helm upgrade --atomic --install simple-web-app ./chart` 
 12. Deployment / orchestration with skaffold
 13. K8s operators
 14. Commands to validate each layer of the K8s layer

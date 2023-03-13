@@ -1,0 +1,15 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata: 
+  labels:
+    app: simple-web-app
+  name: simple-web-app
+spec: 
+  virtualhost:
+    fqdn: simple-web-app-local
+  routes: 
+    - conditions:
+      - prefix: /
+      services:
+        - name: simple-web-app
+          port: 80
